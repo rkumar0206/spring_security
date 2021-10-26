@@ -40,6 +40,12 @@ Learning about spring security - login / logout
 
 #### STEP 2 : Adding the mandatory dependencies
 
+    <properties>
+		<springframework.version>5.2.8.RELEASE</springframework.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
   	<dependencies>
   
   		<!-- Spring MVC support -->
@@ -205,3 +211,104 @@ Learning about spring security - login / logout
  - As of now we cannot see the login form but ya the app should be up and running successfully.
  
  
+---
+
+### Basic Spring Security
+
+- Now let's add a basic secuity to our app.
+
+#### STEP 1 : Adding dependency
+
+- Adding spring-security dependencies
+- **Note:** different versions of spring-security support on a particular dependency of spring framework. For example : Here, the spring security with version 5.5.1 is compatible with the 5.3.8 version of spring framwork.
+
+##### pom.xml
+
+	<properties>
+		<springframework.version>5.3.8</springframework.version>
+		<springsecurity.version>5.5.1</springsecurity.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<dependencies>
+
+		<!-- Spring MVC support -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+
+		<!-- Spring security -->
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${springsecurity.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${springsecurity.version}</version>
+		</dependency>
+        ...
+        ...
+        
+ #### STEP 2 : Create Spring Security initializer
+ 
+ - __*AbstractSecurityWebApplicationInitializer*__ :  Registers the DelegatingFilterProxy to use the springSecurityFilterChain before any other registered Filter.
+ - In other words, when we run the app, the first screen which is visible is the login form, and that is because of this class.
+ - So, make a class named *SecurityWebApplicationInitializer* in *com.rohitThebest.springsecurity.demo.config* package and extend it with *AbstractSecurityWebApplicationInitializer*
+
+        package com.rohitThebest.springsecurity.demo.config;
+        
+        import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
+        
+        public class SecurityWebApplicationInitializer 
+        	extends AbstractSecurityWebApplicationInitializer {
+        
+        }
+#### STEP 3 : Make a configuration class for configuring web security
+
+- Make a class *DemoSecurityConfig* (package com.rohitThebest.springsecurity.demo.config) and extend it with *WebSecurityConfigurerAdapter* 
+- __*WebSecurityConfigurerAdapter*__ : It is a convenience class that allows customization to both WebSecurity and HttpSecurity. We can extend WebSecurityConfigurerAdapter multiple times (in distinct objects) to replicate the behavior of having multiple http elements.
+- ![image](https://user-images.githubusercontent.com/63965898/138929741-962cc1c5-95de-433e-b5c7-8fd81cb2a8af.png)
+
+##### DemoSecurityConfig.java
+
+    package com.rohitThebest.springsecurity.demo.config;
+    
+    import org.springframework.context.annotation.Configuration;
+    import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+    import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+    import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+    import org.springframework.security.core.userdetails.User;
+    import org.springframework.security.core.userdetails.User.UserBuilder;
+    
+    @Configuration
+    @EnableWebSecurity
+    public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
+    
+    	@Override
+    	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    
+    		// add our users for in memory authentication
+    
+    		UserBuilder users = User.withDefaultPasswordEncoder();
+    
+    		auth.inMemoryAuthentication()
+    				.withUser(users.username("rohit").password("test123").roles("EMPLOYEE"))
+    				.withUser(users.username("mohit").password("test123").roles("MANAGER"))
+    				.withUser(users.username("sagar").password("test123").roles("ADMIN"));
+    	}
+    
+    }
+
+#### STEP 4 : Run the app
+
+- After running we can observe that before accessing our home.jsp we need to authenticate first.
+
+![image](https://user-images.githubusercontent.com/63965898/138930288-7a220f7a-3464-40f3-a5fb-124b0f3dbe83.png)
+
