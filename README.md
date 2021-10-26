@@ -5,7 +5,7 @@ Learning about spring security - login / logout
 - We will use maven for creating project.
 - We will use pure java configuration (also for web.xml and dispatcher-servlet.xml)
 
-### Setting up the project
+## Setting up the project
 
 #### STEP 1 : Adding war plugin for replacing web.xml file
 
@@ -213,7 +213,7 @@ Learning about spring security - login / logout
  
 ---
 
-### Basic Spring Security
+## Basic Spring Security
 
 - Now let's add a basic secuity to our app.
 
