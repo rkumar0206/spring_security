@@ -220,7 +220,7 @@ Learning about spring security - login / logout
 #### STEP 1 : Adding dependency
 
 - Adding spring-security dependencies
-- **Note:** different versions of spring-security support on a particular dependency of spring framework. For example : Here, the spring security with version 5.5.1 is compatible with the 5.3.8 version of spring framwork.
+- **Note:** different versions of spring-security support on a particular dependency of spring framework. For example : Here, the spring security with version 5.5.1 is compatible with the 5.3.8 version of spring framework.
 
 ##### pom.xml
 
