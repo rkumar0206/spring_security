@@ -429,5 +429,5 @@ Learning about spring security - login / logout
 	</html>
 	
 - When we run the app,
-  - If the user enters a right password, he will be authnticated.
-  - If the user enter wrong credentials, then sping will redirect the user to the same page with a parameter error, we need to check if the error is not null. If the error value is not null then we will show the error message to the user.
+  - If the user enters a right password, he will be authEnticated.
+  - If the user enter wrong credentials, then sping will redirect the user to the same page (LoginPage) with a parameter error, we need to check if the value of error is not null. If the error value is not null then we will show the error message to the user.
