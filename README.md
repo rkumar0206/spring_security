@@ -313,3 +313,121 @@ Learning about spring security - login / logout
 ![image](https://user-images.githubusercontent.com/63965898/138930288-7a220f7a-3464-40f3-a5fb-124b0f3dbe83.png)
 
 ---
+
+## Custom Login Form
+
+- Till now we were using the login form provided by the spring security.
+- Now, let us use our own cutom login page
+
+#### STEP 1 : Override the *configure(HttpSecurity http)* method in *DemoSecurityConfig,java*
+
+- In *DemoSecurityConfig.java* we need to override another method of *WebSecurityConfigurerAdapter* which is *protected void configure(HttpSecurity http)*
+- In this method we can configure for our custom login
+
+##### DemoSecurityConfig.java
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+	
+		http.authorizeRequests()	// Restrict access based on the HttpServletRequest
+			.anyRequest().authenticated() // any request to the app must be authenticated
+			.and()
+			.formLogin() // We are customizing the form login process
+			.loginPage("/showMyLoginPage") // show our custom form at the request mapping "/showMyLoginPage"
+			.loginProcessingUrl("/authenticateTheUser") // Login form should POST (submit) data to this url for processing
+			.permitAll(); // anyone can access the login page without any need to login
+	}
+
+- read the comments to understand
+
+#### STEP 2 : Make a LoginController.java
+
+- It is for handling our custom login page i.e. handling the /showMyLoginPage endpoint
+- Here we will map the url /showMyLoginPage and return our custom login view
+
+##### LoginController.java
+
+	package com.rohitThebest.springsecurity.demo.controller;
+	
+	import org.springframework.stereotype.Controller;
+	import org.springframework.web.bind.annotation.GetMapping;
+	
+	@Controller
+	public class LoginController {
+		
+		@GetMapping("/showMyLoginPage")
+		public String showMyLoginPage() {
+			
+			// can use any one of plain-login.jsp or fancy-login.jsp
+			return "fancy-login";  // view name - fancy-login.jsp
+		}
+	}
+
+#### STEP 3 : Make the jsp page in WEB-INF/view/
+
+##### plain-login.jsp
+
+	<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+		pageEncoding="ISO-8859-1"%>
+	<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+	
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<meta charset="ISO-8859-1">
+		<title>Custom Login Page</title>
+		
+		<style>
+		
+			.failed {
+				
+				color: red;
+			}
+		</style>
+	
+	</head>
+	<body>
+	
+		<h3>My Custom Login Page</h3>
+	
+		<form:form
+			action="${pageContext.request.contextPath}/authenticateTheUser"
+			method="POST">
+	
+			<!-- Check for login error
+			
+				If there is an error in login, spring will redirect us to this 
+				page with a parameter called error, we need to check the value of
+				error and if it is not null, we will show the error message to the user
+			 -->
+	
+			<c:if test="${param.error != null }">
+	
+				<i class="failed">Sorry!!! You entered invalid username/ password</i>
+				
+			</c:if>
+	
+			<!-- Here the name (username and password) should be exactly like
+				written below, as spring will look for that particular 
+				variable name for authentication -->
+			<p>
+	
+				User name : <input type="text" name="username" />
+	
+			</p>
+			<p>
+	
+				Password : <input type="password" name="password" />
+			</p>
+	
+			<input type="submit" value="Login" />
+	
+		</form:form>
+	
+	</body>
+	</html>
+	
+- When we run the app,
+  - If the user enters a right password, he will be authnticated.
+  - If the user enter wrong credentials, then sping will redirect the user to the same page with a parameter error, we need to check if the error is not null. If the error value is not null then we will show the error message to the user.
